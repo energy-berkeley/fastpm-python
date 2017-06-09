@@ -72,14 +72,14 @@ def main(args=None):
 
     solver = Solver(config.pm, cosmology=config['cosmology'], B=config['pm_nc_factor'])
     whitenoise = solver.whitenoise(seed=config['seed'], unitary=config['unitary'])
-    dlin = solver.linear(whitenoise, tf=lambda k : config['powerspectrum'](k) ** 0.5, a=1.0)
+    dlin = solver.linear(whitenoise, Pk=lambda k : config['powerspectrum'](k))
 
     Q = config.pm.generate_uniform_particle_grid(shift=config['shift'])
 
     state = solver.lpt(dlin, Q=Q, a=config['stages'][0], order=2)
 
     def write_power(d, path, a):
-        meshsource = MemoryMesh(d, Nmesh=config['nc'])
+        meshsource = MemoryMesh(d, Nmesh=config['pm_nc_factor'] * config['nc'])
         r = FFTPower(meshsource, mode='1d')
         if config.pm.comm.rank == 0:
             print('Writing matter power spectrum at %s' % path)
@@ -100,7 +100,7 @@ def main(args=None):
 
         if action == 'F':
             a = state.a['F']
-            path = config.makepath('power-%06.4f.txt' % a) % a
+            path = config.makepath('power-%06.4f.txt' % a)
             write_power(event['delta_k'], path, a)
 
         if state.synchronized:
