@@ -192,23 +192,26 @@ def get_species_transfer_function_from_class(cosmology, z):
     # flip the sign to meet preserve the phase of the
     d['d_cdm'] = tf['d_cdm'] * -1
     d['d_b'] = tf['d_b'] * -1
-    d['d_ncdm[0]'] = tf['d_ncdm[0]'] * -1
+    if getattr(tf, 'd_ncdm[0]', None) is not None:
+        d['d_ncdm[0]'] = tf['d_ncdm[0]'] * -1
     if cosmology.gauge == 'newtonian':
         # dtau to da, the negative sign in the 3 fluid equation of motion
         # eliminated due to the flip in d
         fac = 1.0 / (cosmology.hubble_function(z) * (1. + z) ** -2)
         d['dd_cdm'] = tf['t_cdm'] * fac
         d['dd_b'] = tf['t_b'] * fac
-        d['dd_ncdm[0]'] = tf['t_ncdm[0]'] * fac
+        if getattr(tf, 't_ncdm[0]', None) is not None:
+            d['dd_ncdm[0]'] = tf['t_ncdm[0]'] * fac
     elif cosmology.gauge == 'synchronous':
         fac = 1.0 / (cosmology.hubble_function(z) * (1. + z) ** -2)
         d['dd_cdm'] = 0.5 * tf['h_prime'] * fac
         d['dd_b'] = (0.5 * tf['h_prime'] + tf['t_b']) * fac
-        d['dd_ncdm[0]'] = (0.5 * tf['h_prime'] + tf['t_ncdm[0]']) * fac
+        if getattr(tf, 't_ncdm[0]', None) is not None:
+            d['dd_ncdm[0]'] = (0.5 * tf['h_prime'] + tf['t_ncdm[0]']) * fac
 
     k = tf['k'].copy()
     e = {}
     for name in d:
         e[name] = lambda k, x=tf['k'], y=d[name]: numpy.interp(k, x, y, left=0, right=0)
     return e
-
+correspondencecorrespondence
