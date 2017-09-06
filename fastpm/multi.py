@@ -194,6 +194,7 @@ def get_species_transfer_function_from_class(cosmology, z):
     d['d_b'] = tf['d_b'] * -1
     if getattr(tf, 'd_ncdm[0]', None) is not None:
         d['d_ncdm[0]'] = tf['d_ncdm[0]'] * -1
+    d['d_tot'] = tf['d_tot'] * -1
     if cosmology.gauge == 'newtonian':
         # dtau to da, the negative sign in the 3 fluid equation of motion
         # eliminated due to the flip in d
@@ -214,4 +215,3 @@ def get_species_transfer_function_from_class(cosmology, z):
     for name in d:
         e[name] = lambda k, x=tf['k'], y=d[name]: numpy.interp(k, x, y, left=0, right=0)
     return e
-correspondencecorrespondence
