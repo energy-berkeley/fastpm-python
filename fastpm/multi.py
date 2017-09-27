@@ -73,7 +73,7 @@ class Solver(object):
             source1[...] += sp.Omega(a) * source
             Omega_tot += sp.Omega(a)
 
-            DX1 = lpt1(source, Q)
+            DX1 = lpt1(source, Q)*pt.D1(a)
             sp.S[...] = DX1
 
             def apply_velocity(k, v):
